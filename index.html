@@ -1,4 +1,16 @@
-<!DOCTYPE html>
+.logo-image {
+            height: 60px; /* Aumentado de 50px */
+            width: 60px;  /* Ahora es cuadrada para mostrar imagen completa */
+            margin-right: 12px;
+            border-radius: 8px; /* Menos redondeado para mostrar más imagen */
+            box-shadow: var(--shadow-light);
+            transition: transform var(--transition-normal);
+            transform-origin: top center;
+            animation: pendulumSwing 3s infinite alternate ease-in-out;
+            object-fit: contain; /* Cambiado de cover a contain para mostrar imagen completa */
+            background-color: transparent; /* Fondo transparente */
+            padding: 2px; /* Pequeño padding para evitar que se corte */
+        }<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -1053,8 +1065,10 @@
             }
             
             .logo-image {
-                height: 40px;
-                width: 40px;
+                height: 50px; /* Aumentado de 40px */
+                width: 50px;  /* Cuadrada para móvil */
+                object-fit: contain; /* Mantener imagen completa en móvil */
+                padding: 2px;
             }
             
             .ballet-dancer-container {
@@ -1205,8 +1219,10 @@
             }
 
             .logo-image {
-                height: 35px;
-                width: 35px;
+                height: 45px; /* Aumentado de 35px */
+                width: 45px;  /* Cuadrada para pantallas pequeñas */
+                object-fit: contain; /* Mantener imagen completa */
+                padding: 2px;
             }
 
             .ballet-dancer-container {
