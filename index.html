@@ -677,11 +677,75 @@
             height: 100%;
             object-fit: cover;
             transition: transform var(--transition-slow);
+            border-radius: 8px;
         }
 
         .gallery-item:hover img,
         .gallery-item:hover video {
             transform: scale(1.1);
+        }
+
+        /* Estilos específicos para videos */
+        .video-element {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background-color: #f0f0f0;
+        }
+
+        .video-element:hover {
+            cursor: pointer;
+        }
+
+        /* Loading state para videos */
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 115, 185, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            z-index: 1;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item.loaded::before {
+            opacity: 0;
+        }
+
+        /* Play button overlay para videos */
+        .video-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 115, 185, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            z-index: 2;
+            opacity: 0;
+        }
+
+        .gallery-item:hover .video-play-overlay {
+            opacity: 1;
+        }
+
+        .video-play-overlay:hover {
+            background: rgba(255, 115, 185, 1);
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
         /* Blog section */
@@ -1484,27 +1548,68 @@
             
             <div class="gallery-grid">
                 <div class="gallery-item" data-aos="fade-up" data-aos-delay="100">
-                    <video autoplay muted loop poster="https://via.placeholder.com/300x300/ff73b9/ffffff?text=Video+Tejido" preload="metadata" class="lazy-load">
+                    <video 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline 
+                        preload="metadata" 
+                        class="lazy-load video-element"
+                        onloadstart="this.style.opacity='1'"
+                        onerror="handleVideoError(this, 'Video Tejido')"
+                    >
                         <source src="Fotos/teje.mp4" type="video/mp4">
-                        Tu navegador no soporta el elemento de video.
+                        <source src="Fotos/teje.webm" type="video/webm">
+                        <!-- Fallback image if video fails -->
+                        <img src="Fotos/teje-poster.jpg" alt="Video Tejido" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/300x300/ff73b9/ffffff?text=Video+Tejido'">
                     </video>
                 </div>
                 <div class="gallery-item" data-aos="fade-up" data-aos-delay="200">
-                    <video autoplay muted loop poster="https://via.placeholder.com/300x300/c5e8e8/333333?text=Video+Granne" preload="metadata" class="lazy-load">
+                    <video 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline 
+                        preload="metadata" 
+                        class="lazy-load video-element"
+                        onloadstart="this.style.opacity='1'"
+                        onerror="handleVideoError(this, 'Video Granne')"
+                    >
                         <source src="Fotos/granne.mp4" type="video/mp4">
-                        Tu navegador no soporta el elemento de video.
+                        <source src="Fotos/granne.webm" type="video/webm">
+                        <img src="Fotos/granne-poster.jpg" alt="Video Granne" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/300x300/c5e8e8/333333?text=Video+Granne'">
                     </video>
                 </div>
                 <div class="gallery-item" data-aos="fade-up" data-aos-delay="300">
-                    <video autoplay muted loop poster="https://via.placeholder.com/300x300/ff73b9/ffffff?text=Video+1" preload="metadata" class="lazy-load">
+                    <video 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline 
+                        preload="metadata" 
+                        class="lazy-load video-element"
+                        onloadstart="this.style.opacity='1'"
+                        onerror="handleVideoError(this, 'Video Proceso')"
+                    >
                         <source src="Fotos/1.mp4" type="video/mp4">
-                        Tu navegador no soporta el elemento de video.
+                        <source src="Fotos/1.webm" type="video/webm">
+                        <img src="Fotos/1-poster.jpg" alt="Video Proceso" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/300x300/ff73b9/ffffff?text=Video+Proceso'">
                     </video>
                 </div>
                 <div class="gallery-item" data-aos="fade-up" data-aos-delay="400">
-                    <video autoplay muted loop poster="https://via.placeholder.com/300x300/c5e8e8/333333?text=Video+Cafe" preload="metadata" class="lazy-load">
+                    <video 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline 
+                        preload="metadata" 
+                        class="lazy-load video-element"
+                        onloadstart="this.style.opacity='1'"
+                        onerror="handleVideoError(this, 'Video Cafe')"
+                    >
                         <source src="Fotos/cafe.mp4" type="video/mp4">
-                        Tu navegador no soporta el elemento de video.
+                        <source src="Fotos/cafe.webm" type="video/webm">
+                        <img src="Fotos/cafe-poster.jpg" alt="Video Cafe" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/300x300/c5e8e8/333333?text=Video+Cafe'">
                     </video>
                 </div>
             </div>
@@ -1699,13 +1804,99 @@
             initMusicControl();
             initMobileMenu();
             initNewsletterForm();
+            initVideoSystem();
             collectModalImages();
             
             // Animaciones de entrada
             animateOnScroll();
         });
 
-        // Sistema de lazy loading optimizado
+        // Sistema de videos optimizado
+        function initVideoSystem() {
+            const videos = document.querySelectorAll('.video-element');
+            
+            videos.forEach((video, index) => {
+                const container = video.closest('.gallery-item');
+                
+                // Crear overlay de play
+                const playOverlay = document.createElement('div');
+                playOverlay.className = 'video-play-overlay';
+                playOverlay.innerHTML = '<i class="fas fa-play"></i>';
+                container.appendChild(playOverlay);
+                
+                // Event listeners para video
+                video.addEventListener('loadstart', () => {
+                    video.style.opacity = '0.5';
+                });
+                
+                video.addEventListener('canplay', () => {
+                    video.style.opacity = '1';
+                    container.classList.add('loaded');
+                });
+                
+                video.addEventListener('error', () => {
+                    handleVideoError(video, `Video ${index + 1}`);
+                });
+                
+                // Click para pausar/reproducir
+                video.addEventListener('click', () => {
+                    toggleVideoPlay(video);
+                });
+                
+                playOverlay.addEventListener('click', () => {
+                    toggleVideoPlay(video);
+                });
+                
+                // Intersection Observer para videos
+                const videoObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            if (video.paused) {
+                                video.play().catch(e => {
+                                    console.log('Autoplay bloqueado:', e);
+                                });
+                            }
+                        } else {
+                            if (!video.paused) {
+                                video.pause();
+                            }
+                        }
+                    });
+                }, { 
+                    threshold: 0.5 
+                });
+                
+                videoObserver.observe(video);
+            });
+        }
+
+        // Manejar errores de video
+        function handleVideoError(video, altText) {
+            const container = video.closest('.gallery-item');
+            container.classList.add('loaded');
+            
+            // Crear imagen de fallback
+            const fallbackImg = document.createElement('img');
+            fallbackImg.src = `https://via.placeholder.com/300x300/ff73b9/ffffff?text=${encodeURIComponent(altText)}`;
+            fallbackImg.alt = altText;
+            fallbackImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 8px;';
+            
+            // Reemplazar video con imagen
+            video.parentNode.replaceChild(fallbackImg, video);
+            
+            console.warn(`Video fallido, usando imagen de respaldo: ${altText}`);
+        }
+
+        // Toggle play/pause para videos
+        function toggleVideoPlay(video) {
+            if (video.paused) {
+                video.play().catch(e => {
+                    console.log('No se pudo reproducir el video:', e);
+                });
+            } else {
+                video.pause();
+            }
+        }
         function initLazyLoading() {
             const imageObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
