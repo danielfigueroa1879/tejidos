@@ -366,4 +366,273 @@ function showNotification(message, type = 'info') {
         color: white;
         padding: 15px 20px;
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+        font-size: 14px;
+        font-family: inherit;
+    `;
+
+    document.body.appendChild(notification);
+
+    // Animar entrada
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+
+    // Auto-eliminar
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
+}
+
+// Sistema de videos optimizado
+function initVideoSystem() {
+    const videos = document.querySelectorAll('video');
+    
+    videos.forEach((video, index) => {
+        // Configurar video
+        video.addEventListener('loadstart', () => {
+            console.log(`🎬 Cargando video ${index + 1}`);
+        });
+        
+        video.addEventListener('canplay', () => {
+            console.log(`✅ Video ${index + 1} listo para reproducir`);
+        });
+        
+        video.addEventListener('error', (e) => {
+            console.warn(`❌ Error en video ${index + 1}:`, e);
+            handleVideoError(video, `Video ${index + 1}`);
+        });
+        
+        // Control click para pausar/reproducir
+        video.addEventListener('click', () => {
+            if (video.paused) {
+                video.play().catch(e => {
+                    console.log('No se pudo reproducir el video:', e);
+                });
+            } else {
+                video.pause();
+            }
+        });
+        
+        // Intersection Observer para autoplay inteligente
+        if ('IntersectionObserver' in window) {
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (video.paused) {
+                            video.play().catch(e => {
+                                console.log('Autoplay bloqueado:', e);
+                            });
+                        }
+                    } else {
+                        if (!video.paused) {
+                            video.pause();
+                        }
+                    }
+                });
+            }, { 
+                threshold: 0.5 
+            });
+            
+            videoObserver.observe(video);
+        }
+    });
+
+    console.log(`✅ Sistema de videos inicializado (${videos.length} videos)`);
+}
+
+// Manejar errores de video
+function handleVideoError(video, altText) {
+    const container = video.closest('.gallery-item');
+    if (!container) return;
+    
+    // Crear imagen de fallback
+    const fallbackImg = document.createElement('img');
+    fallbackImg.src = `https://via.placeholder.com/300x300/ff73b9/ffffff?text=${encodeURIComponent(altText)}`;
+    fallbackImg.alt = altText;
+    fallbackImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 8px;';
+    
+    // Reemplazar video con imagen
+    video.parentNode.replaceChild(fallbackImg, video);
+    
+    console.warn(`❌ Video fallido, usando imagen de respaldo: ${altText}`);
+}
+
+// Gestión de eventos de teclado globales
+document.addEventListener('keydown', (e) => {
+    // Atajos de teclado útiles
+    if (e.key === 'm' || e.key === 'M') {
+        if (!e.ctrlKey && !e.altKey) {
+            toggleMusic();
+        }
+    }
+    
+    if (e.key === 'Home') {
+        e.preventDefault();
+        scrollToTop();
+    }
+});
+
+// Optimizaciones de rendimiento
+window.addEventListener('load', () => {
+    console.log('🚀 Tejidos Luna completamente cargado');
+    
+    // Precargar imágenes críticas
+    preloadCriticalImages();
+    
+    // Optimización para dispositivos móviles
+    if (isMobile()) {
+        optimizeForMobile();
+    }
+
+    // Inicializar animaciones
+    setTimeout(initAnimations, 500);
+});
+
+function preloadCriticalImages() {
+    const criticalImages = [
+        'Fotos/su.jpg',
+        'Fotos/corriente.png',
+        'Fotos/bailarina1.png'
+    ];
+
+    criticalImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => console.log(`✅ Precargada: ${src}`);
+        img.onerror = () => console.warn(`❌ Error precargando: ${src}`);
+    });
+}
+
+function optimizeForMobile() {
+    // Reducir animaciones en dispositivos de baja potencia
+    if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) {
+        document.documentElement.style.setProperty('--transition-normal', '0.1s');
+        document.documentElement.style.setProperty('--transition-slow', '0.2s');
+        console.log('📱 Optimizaciones móviles aplicadas');
+    }
+}
+
+// Detección de dispositivo
+function isMobile() {
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Animaciones de entrada suaves
+function initAnimations() {
+    // Observer para animaciones de entrada
+    if ('IntersectionObserver' in window) {
+        const animationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Aplicar animaciones a elementos específicos
+        document.querySelectorAll('.product-card, .blog-card, .featured-image').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            animationObserver.observe(el);
+        });
+
+        console.log('✅ Animaciones de entrada inicializadas');
+    }
+}
+
+// Gestión de conexión lenta
+if ('connection' in navigator) {
+    const connection = navigator.connection;
+    if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+        // Optimizaciones para conexiones lentas
+        document.querySelectorAll('video').forEach(video => {
+            video.preload = 'none';
+        });
+        console.log('🐌 Optimizaciones para conexión lenta aplicadas');
+    }
+}
+
+// Manejo de errores globales
+window.addEventListener('error', (e) => {
+    console.warn('⚠️ Error capturado:', e.error);
+});
+
+// Gestión de cambio de orientación
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        // Recalcular dimensiones
+        window.scrollTo(0, window.scrollY);
+        
+        // Recolectar imágenes del modal nuevamente
+        collectModalImages();
+        
+        console.log('🔄 Orientación cambiada, recalculando...');
+    }, 100);
+});
+
+// Gestión de memoria
+function cleanupMemory() {
+    // Limpiar referencias no utilizadas
+    modalImages = [];
+    
+    // Pausar todos los videos
+    document.querySelectorAll('video').forEach(video => {
+        video.pause();
+    });
+}
+
+// Cleanup al salir de la página
+window.addEventListener('beforeunload', () => {
+    cleanupMemory();
+    console.log('🧹 Memoria limpiada');
+});
+
+// Service Worker para PWA (opcional)
+if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+    navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+            console.log('✅ Service Worker registrado:', registration);
+        })
+        .catch(error => {
+            console.log('ℹ️ Service Worker no disponible:', error);
+        });
+}
+
+// Inicialización final
+setTimeout(() => {
+    // Marcar como completamente cargado
+    document.body.classList.add('loaded');
+    
+    console.log(`
+🎨 ================================
+   TEJIDOS LUNA - SISTEMA LISTO
+   ================================
+   ✅ Header con animaciones
+   ✅ Modal de imágenes
+   ✅ Control de música  
+   ✅ Menú móvil responsive
+   ✅ Videos con autoplay
+   ✅ Newsletter funcional
+   ✅ Scroll suave optimizado
+   ✅ Notificaciones elegantes
+   ================================
+   🚀 ¡Sitio web completamente funcional!
+    `);
+}, 2000);
+
+console.log('🚀 Sistema JavaScript de Tejidos Luna completamente inicializado');
