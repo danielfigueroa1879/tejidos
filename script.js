@@ -302,7 +302,7 @@ function collectAndOptimizeModalImages() {
     console.log(`📸 ${modalImages.length} imágenes optimizadas para modal profesional`);
 }
 
-// Abrir modal avanzado
+// Abrir modal avanzado con música automática
 function openModal(imgElement) {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
@@ -339,11 +339,251 @@ function openModal(imgElement) {
     // Focus management
     modal.querySelector('.modal-close').focus();
     
+    // ACTIVAR MÚSICA AUTOMÁTICAMENTE AL ABRIR MODAL
+    autoStartMusic();
+    
     // Precargar imagen siguiente
     preloadAdjacentImages();
 
-    console.log(`🖼️ Modal avanzado abierto: ${currentImage.alt}`);
+    console.log(`🖼️ Modal avanzado abierto: ${currentImage.alt} - Música activada automáticamente`);
 }
+
+// Función para activar música automáticamente
+function autoStartMusic() {
+    const audio = document.getElementById('backgroundMusic');
+    const toggleBtn = document.getElementById('musicToggle');
+    const icon = document.getElementById('musicIcon');
+
+    if (!audio || !toggleBtn || !icon) {
+        console.warn('⚠️ Controles de música no encontrados para auto-start');
+        return;
+    }
+
+    // Solo activar si no está ya reproduciendo
+    if (audio.paused) {
+        audio.play().then(() => {
+            icon.className = 'fas fa-pause';
+            toggleBtn.classList.add('playing');
+            toggleBtn.title = 'Pausar música';
+            
+            // Mostrar notificación sutil de que se activó la música
+            showMusicNotification('🎵 Música activada automáticamente', 'success');
+            
+            console.log('🎵 Música activada automáticamente al abrir modal');
+        }).catch(e => {
+            console.log('❌ No se pudo activar la música automáticamente:', e);
+            // Mostrar notificación para que el usuario active manualmente
+            showMusicNotification('🎵 Haz clic en el botón de música para activarla', 'info');
+        });
+    } else {
+        console.log('🎵 Música ya estaba activa');
+    }
+}
+
+// Notificación específica para música (más sutil)
+function showMusicNotification(message, type = 'info') {
+    // Remover notificaciones de música existentes
+    const existingMusicNotifications = document.querySelectorAll('.music-notification');
+    existingMusicNotifications.forEach(notification => notification.remove());
+
+    // Crear nueva notificación más sutil
+    const notification = document.createElement('div');
+    notification.className = `music-notification notification-${type}`;
+    
+    const iconClass = type === 'success' ? 'fa-music' : 'fa-info-circle';
+    const bgColor = type === 'success' ? 'rgba(76, 175, 80, 0.9)' : 'rgba(33, 150, 243, 0.9)';
+
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas ${iconClass}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    // Estilos más sutiles para notificación de música
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: ${bgColor};
+        color: white;
+        padding: 10px 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9998;
+        transform: translateX(100%);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        max-width: 280px;
+        font-size: 13px;
+        font-family: inherit;
+        backdrop-filter: blur(8px);
+        opacity: 0.95;
+    `;
+
+    document.body.appendChild(notification);
+
+    // Animar entrada
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+
+    // Auto-eliminar más rápido (2 segundos para música)
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 2000);
+}
+
+// Función mejorada para toggle manual de música
+function toggleMusic() {
+    const audio = document.getElementById('backgroundMusic');
+    const toggleBtn = document.getElementById('musicToggle');
+    const icon = document.getElementById('musicIcon');
+
+    if (!audio || !toggleBtn || !icon) {
+        console.error('❌ Elementos de música no encontrados');
+        return;
+    }
+
+    if (audio.paused) {
+        audio.play().then(() => {
+            icon.className = 'fas fa-pause';
+            toggleBtn.classList.add('playing');
+            toggleBtn.title = 'Pausar música';
+            showMusicNotification('🎵 Música activada', 'success');
+            console.log('🎵 Música iniciada manualmente');
+        }).catch(e => {
+            console.log('❌ No se pudo reproducir la música:', e);
+            showNotification('No se pudo reproducir la música. Verifica que el archivo de audio esté disponible.', 'error');
+        });
+    } else {
+        audio.pause();
+        icon.className = 'fas fa-play';
+        toggleBtn.classList.remove('playing');
+        toggleBtn.title = 'Reproducir música';
+        showMusicNotification('🎵 Música pausada', 'info');
+        console.log('⏸️ Música pausada manualmente');
+    }
+}
+
+// Cerrar modal avanzado (sin pausar música automáticamente)
+function closeAdvancedModal() {
+    const modal = document.getElementById('imageModal');
+    if (!modal) return;
+
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = 'auto';
+    
+    // Resetear transformaciones
+    resetImageTransform();
+    
+    // Nota: NO pausamos la música al cerrar el modal
+    // La música sigue reproduciendo para mejor experiencia
+    
+    console.log('❌ Modal avanzado cerrado - Música continúa');
+}
+
+// Función mejorada para navegación de imágenes con música
+function nextImage() {
+    if (modalImages.length === 0) return;
+    
+    currentImageIndex = (currentImageIndex + 1) % modalImages.length;
+    updateModalImage();
+    
+    // Verificar que la música siga activa al cambiar imagen
+    ensureMusicContinues();
+}
+
+function prevImage() {
+    if (modalImages.length === 0) return;
+    
+    currentImageIndex = currentImageIndex === 0 ? modalImages.length - 1 : currentImageIndex - 1;
+    updateModalImage();
+    
+    // Verificar que la música siga activa al cambiar imagen
+    ensureMusicContinues();
+}
+
+// Función para asegurar continuidad de música
+function ensureMusicContinues() {
+    const audio = document.getElementById('backgroundMusic');
+    
+    if (audio && audio.paused) {
+        // Si la música se pausó por alguna razón, intentar reactivarla
+        audio.play().catch(e => {
+            console.log('La música se pausó, usuario puede reactivarla manualmente');
+        });
+    }
+}
+
+// Mejorar el control de música inicial
+function initMusicControl() {
+    const audio = document.getElementById('backgroundMusic');
+    const toggleBtn = document.getElementById('musicToggle');
+    
+    if (!audio || !toggleBtn) {
+        console.warn('⚠️ Controles de música no encontrados');
+        return;
+    }
+
+    // Configuración optimizada de audio
+    audio.volume = 0.25; // Volumen suave para auto-start
+    audio.loop = true;   // Loop automático
+    
+    // Manejar errores de audio
+    audio.addEventListener('error', (e) => {
+        console.warn('⚠️ Error de audio:', e);
+        toggleBtn.style.display = 'none';
+        showNotification('No se pudo cargar el archivo de música', 'error');
+    });
+
+    // Detectar cuando el audio termina (por si acaso)
+    audio.addEventListener('ended', () => {
+        console.log('🎵 Audio terminó, reiniciando...');
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log('Error al reiniciar audio:', e));
+    });
+
+    // Mostrar estado inicial
+    console.log('✅ Control de música optimizado inicializado - Volumen:', audio.volume);
+}
+
+// Función adicional para verificar capacidades de audio del navegador
+function checkAudioSupport() {
+    const audio = document.getElementById('backgroundMusic');
+    if (!audio) return false;
+
+    // Verificar formatos soportados
+    const canPlayMP3 = audio.canPlayType('audio/mpeg');
+    const canPlayOGG = audio.canPlayType('audio/ogg');
+    
+    console.log('🎵 Soporte de audio:', {
+        mp3: canPlayMP3,
+        ogg: canPlayOGG
+    });
+
+    return canPlayMP3 !== '' || canPlayOGG !== '';
+}
+
+// Ejecutar verificación de audio al cargar
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const audioSupported = checkAudioSupport();
+        if (!audioSupported) {
+            console.warn('⚠️ Navegador no soporta los formatos de audio disponibles');
+            const musicControl = document.getElementById('musicControl');
+            if (musicControl) {
+                musicControl.style.display = 'none';
+            }
+        }
+    }, 1000);
+});
 
 // Cerrar modal avanzado
 function closeAdvancedModal() {
