@@ -944,6 +944,54 @@ footer {
 
 .music-control button.playing {
     animation: pulse 2s infinite;
+    background-color: rgba(255, 115, 185, 0.2);
+    box-shadow: 0 0 20px rgba(255, 115, 185, 0.3), var(--shadow-medium);
+}
+
+/* Notificaciones de música más sutiles */
+.music-notification {
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.music-notification i {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+/* Mejorar el pulso del botón de música activa */
+@keyframes pulse {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(255, 115, 185, 0.7), var(--shadow-medium);
+    }
+    70% { 
+        box-shadow: 0 0 0 10px rgba(255, 115, 185, 0), var(--shadow-medium);
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(255, 115, 185, 0), var(--shadow-medium);
+    }
+}
+
+/* Indicador visual mejorado cuando la música está activa */
+.music-control button.playing::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary-color), #ff9dd4);
+    z-index: -1;
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .scroll-to-top {
